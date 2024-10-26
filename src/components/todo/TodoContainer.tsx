@@ -1,41 +1,43 @@
 import TodoCard from "./TodoCard";
 import AddTodoModal from "./AddTodoModal";
 import TodoDropDownFilter from "./TodoDropDownFilter";
-import { useGetTodosQuery } from "@/redux/api/api";
-import { useAppSelector } from "@/redux/hook";
-import { selectTodo } from "@/redux/features/todoSlice";
 import { useState } from "react";
+import { useAppSelector } from "@/redux/hook";
+import { selectedTodos } from "@/redux/features/todoSlice";
 
 const TodoContainer = () => {
   const [priority, setPriority] = useState("");
-  // console.log(priority);
-  //! From Local State management to show data in the UI.
-  // const todo = useAppSelector(selectTodo);
-  //* From Server state management to get Todos data
-  const { data: todo, isError, isLoading } = useGetTodosQuery(priority);
-  //todo=> [For caching data] -> useGetTodosQuery(undefined, { pollingInterval: 1000, refetchOnMountOrArgChange: true }); etc
-  console.log(todo);
-  // Sort todos so that completed ones are at the end
-  const sortedTodos = [...(todo?.data || [])].sort((a, b) =>
+
+  //todo--> From Local State management to show data in the UI[Redux only]
+  const todos = useAppSelector(selectedTodos);
+  const filteredTodos = todos.filter((todo) => {
+    if (priority === "All") return todos;
+    return todo.priority === priority;
+  });
+  //todo--> From Server state management to get Todos data[RTK]
+  // const { data, isError, isLoading } = useGetTodosQuery(priority);
+  // const { data: todo } = data;
+
+  //* Sort todos so that completed ones are at the end
+  const sortedTodos = [...(filteredTodos || todos)].sort((a, b) =>
     a.isCompleted === b.isCompleted ? 0 : a.isCompleted ? 1 : -1
   );
-
-  console.log(sortedTodos);
-  if (isLoading) {
-    return <h3 className="text-green-400 text-3xl">Loading..............</h3>;
-  }
-  if (isError) {
-    return <h3 className="text-red-400 text-3xl">Error..............</h3>;
-  }
+  // if (isLoading) {
+  //   return <h3 className="text-green-400 text-3xl">Loading..............</h3>;
+  // }
+  // if (isError) {
+  //   return <h3 className="text-red-400 text-3xl">Error..............</h3>;
+  // }
   return (
     <div className=" ">
       <div className="flex justify-between px-3 mb-3">
         <AddTodoModal />
+        {/*Add Todo Button*/}
         <TodoDropDownFilter priority={priority} setPriority={setPriority} />
+        {/*Filter Todo Priority Button*/}
       </div>
       <div className="  p-1.5 w-full h-full bg-primary-gradient rounded-xl gap-x-5">
         <div className="bg-white p-5 rounded-lg space-y-3">
-          {/* {todo?.data?.map((item) => ( */}
           {sortedTodos.map((item) => (
             <TodoCard {...item} key={item._id} />
           ))}
