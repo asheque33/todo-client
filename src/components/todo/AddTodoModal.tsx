@@ -23,34 +23,30 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { useCreateTodoMutation } from "@/redux/api/api";
 
 const AddTodoModal = () => {
   const [task, setTask] = useState("");
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState("");
-  //! For Local State management
-  // const dispatch = useAppDispatch();
-  //todo=> For Server State management
-  const [createTodo, { data, isLoading, isError }] = useCreateTodoMutation();
+  //! For Local State management(Redux only)
+  const dispatch = useAppDispatch();
+  //todo=> For Server State management(RTk Query)
+  // const [createTodo, { data, isLoading, isError }] = useCreateTodoMutation();
   /* -------- */
   const handleModalForm = (e: FormEvent) => {
     e.preventDefault();
-    //* const id = Math.random().toString(36).substring(2, 11);
+    const id = Math.random().toString(36).substring(2, 11);
     const taskDetails = {
-      // id: id,
+      _id: id,
       title: task,
       description,
       isCompleted: false,
       priority,
     };
-    //! For Local State to create data[locally] => [createTodo<-todoSlice.ts]
-    // dispatch(createTodo(taskDetails));
-    //todo=> For Server State management to create data using server
-    console.log(taskDetails);
-    console.log({ data, isLoading, isError });
-    createTodo(taskDetails);
-    console.log("inside modal form", taskDetails);
+    //! For Local State to create data[locally] => [createTodo<-todoSlice.ts]-->Redux only
+    dispatch(createTodo(taskDetails));
+    //todo=> For Server State management to create data using server[RTK Query]
+    // createTodo(taskDetails);
   };
   return (
     <Dialog>
@@ -78,13 +74,15 @@ const AddTodoModal = () => {
               </Label>
               <Input
                 onBlur={(e) => setTask(e.target.value)}
+                required
+                placeholder="Add Task Title"
                 id="task"
                 className="col-span-3"
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label className="text-right">Priority</Label>
-              <Select onValueChange={(value) => setPriority(value)}>
+              <Select required onValueChange={(value) => setPriority(value)}>
                 <SelectTrigger className="col-span-3">
                   <SelectValue placeholder="Select Priority" />
                 </SelectTrigger>
@@ -102,8 +100,11 @@ const AddTodoModal = () => {
               <Label htmlFor="description" className="text-right">
                 Description
               </Label>
-              <Input
-                onBlur={(e) => setDescription(e.target.value)}
+              <textarea
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Add description here..."
+                name="description"
+                required={true}
                 id="description"
                 className="col-span-3"
               />
@@ -112,7 +113,7 @@ const AddTodoModal = () => {
 
           <DialogFooter>
             <DialogClose asChild>
-              <Button type="submit">Save changes</Button>
+              <Button type="submit">Add Todo</Button>
             </DialogClose>
           </DialogFooter>
         </form>

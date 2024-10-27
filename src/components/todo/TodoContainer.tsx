@@ -11,7 +11,7 @@ const TodoContainer = () => {
   //todo--> From Local State management to show data in the UI[Redux only]
   const todos = useAppSelector(selectedTodos);
   const filteredTodos = todos.filter((todo) => {
-    if (priority === "All") return todos;
+    if (priority === "" || priority === "All") return todos;
     return todo.priority === priority;
   });
   //todo--> From Server state management to get Todos data[RTK]
@@ -29,12 +29,12 @@ const TodoContainer = () => {
   //   return <h3 className="text-red-400 text-3xl">Error..............</h3>;
   // }
   return (
-    <div className=" ">
+    <>
       <div className="flex justify-between px-3 mb-3">
-        <AddTodoModal />
         {/*Add Todo Button*/}
-        <TodoDropDownFilter priority={priority} setPriority={setPriority} />
+        <AddTodoModal />
         {/*Filter Todo Priority Button*/}
+        <TodoDropDownFilter priority={priority} setPriority={setPriority} />
       </div>
       <div className="  p-1.5 w-full h-full bg-primary-gradient rounded-xl gap-x-5">
         <div className="bg-white p-5 rounded-lg space-y-3">
@@ -46,7 +46,7 @@ const TodoContainer = () => {
           <p>There is no task pending</p>
         </div> */}
       </div>
-    </div>
+    </>
   );
 };
 

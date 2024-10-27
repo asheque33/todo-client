@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,8 +8,11 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
-
-const TodoDropDownFilter = ({ priority, setPriority }) => {
+type propsType = {
+  priority: string;
+  setPriority: (priority: string) => void;
+};
+const TodoDropDownFilter = ({ priority, setPriority }: propsType) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -22,6 +24,7 @@ const TodoDropDownFilter = ({ priority, setPriority }) => {
         <DropdownMenuLabel>Filter By Priority</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuRadioGroup value={priority} onValueChange={setPriority}>
+          <DropdownMenuRadioItem value="All">All</DropdownMenuRadioItem>
           <DropdownMenuRadioItem value="High">High</DropdownMenuRadioItem>
           <DropdownMenuRadioItem value="Medium">Medium</DropdownMenuRadioItem>
           <DropdownMenuRadioItem value="Low">Low</DropdownMenuRadioItem>

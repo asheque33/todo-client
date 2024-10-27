@@ -1,9 +1,8 @@
 import { useAppDispatch } from "@/redux/hook";
-import { Button } from "../ui/button";
-import { ListChecks, Trash2 } from "lucide-react";
-import { removeTodo, toggleCompleted } from "@/redux/features/todoSlice";
-import { useUpdateTodoMutation } from "@/redux/api/api";
-type TodoCardProps = {
+import { toggleCompleted } from "@/redux/features/todoSlice";
+import UpdateTodoItem from "./UpdateTodoItem";
+import DeletedModal from "../Modal/DeletedModal";
+export type TodoCardProps = {
   _id: string;
   priority: string;
   title: string;
@@ -17,45 +16,38 @@ const TodoCard = ({
   description,
   isCompleted,
 }: TodoCardProps) => {
-  //* For local State management */
-  // const dispatch = useAppDispatch();
-  // const handleRemoveTodo = () => {
-  //   dispatch(removeTodo(id));
-  // };
-  //* For Server State management */
-  const [updateTodo, { isLoading }] = useUpdateTodoMutation();
+  //todo-> For local State management [Redux only]
+  const dispatch = useAppDispatch();
 
-  const toggleState = () => {
-    // dispatch(toggleCompleted(id));
-    const updatedData = {
-      priority,
-      title,
-      description,
-      isCompleted: !isCompleted,
-    };
-    const updatedDataWithId = { _id, data: updatedData };
-    console.log(updatedData);
-    if (updatedData.isCompleted === true) {
-      // Move the selected done item to the bottom of the list
-      // const doneItem = document.getElementById(_id);
-      // doneItem?.parentNode?.appendChild(doneItem);
-    }
-    updateTodo(updatedDataWithId);
-    if (isLoading) {
-      <p>Loading................</p>;
-    }
+  //! For Server State management [RTK Query]
+  // const [updateTodo, { isLoading }] = useUpdateTodoMutation();
+
+  const togglePriorityState = () => {
+    dispatch(toggleCompleted(_id));
+
+    //* Move the selected done item to the bottom of the list
+    // if (updatedData.isCompleted === true) {
+    const selectedItem = document.getElementById(_id);
+    selectedItem?.parentNode?.appendChild(selectedItem);
+    // }
+    //! Server State management To Update Specific One[RTK Query]
+    // const updatedDataWithId = { _id, data: updatedData };
+    //   updateTodo(updatedDataWithId);
+    //   if (isLoading) {
+    //     <p>Loading................</p>;
+    //   }
   };
   return (
     <div className="flex justify-between items-center rounded-md p-3 border border-purple-400">
       <input
         className="mr-4"
-        onChange={toggleState}
+        onChange={togglePriorityState}
         type="checkbox"
         name="toggle"
         id="toggle"
-        defaultChecked={isCompleted}
+        defaultChecked={isCompleted} //checked condition false
       />
-      <h4 className="text-xl font-semibold flex-[1.5]">{title}</h4>
+      <h4 className="text-xl font-semibold flex-[2]">{title}</h4>
       <div className="flex-1 flex items-center gap-2">
         <div
           className={`size-3 rounded-full 
@@ -74,13 +66,21 @@ const TodoCard = ({
         )}
       </h4>
       <p className="flex-[2.5]">{description}</p>
-      <div className="space-x-5 mr-1">
-        <Button>
-          <Trash2 onClick={() => handleRemoveTodo()} />
-        </Button>
-        <Button>
-          <ListChecks />
-        </Button>
+      <div className="flex justify-between items-center gap-x-6 mr-1">
+        <div>
+          <DeletedModal _id={_id} />
+        </div>
+        <div>
+          <UpdateTodoItem
+            existingTodoItem={{
+              _id,
+              title,
+              priority,
+              description,
+              isCompleted,
+            }}
+          />
+        </div>
       </div>
     </div>
   );

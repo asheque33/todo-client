@@ -21,6 +21,7 @@ export const todoSlice = createSlice({
     createTodo: (state, action: PayloadAction<TTodo>) => {
       // state.todo.push(action.payload);
       state.todos.push({ ...action.payload, isCompleted: false });
+
       // console.log(state.todo.length - 1);
     },
     updateTodo: (state, action: PayloadAction<TTodo>) => {
