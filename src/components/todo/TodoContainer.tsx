@@ -29,7 +29,7 @@ const TodoContainer = () => {
   //   return <h3 className="text-red-400 text-3xl">Error..............</h3>;
   // }
   return (
-    <>
+    <div>
       <div className="flex justify-between px-3 mb-3">
         {/*Add Todo Button*/}
         <AddTodoModal />
@@ -46,7 +46,7 @@ const TodoContainer = () => {
           <p>There is no task pending</p>
         </div> */}
       </div>
-    </>
+    </div>
   );
 };
 
